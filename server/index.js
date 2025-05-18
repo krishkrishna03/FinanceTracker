@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -18,6 +20,23 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://financetrackerk.netlify.app/'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 
 // MongoDB connection
 const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://patnalasrikrishnasai:Login@cluster0.igezekd.mongodb.net/fintrack';
