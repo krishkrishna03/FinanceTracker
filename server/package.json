@@ -10,9 +10,13 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
-  "scripts": {
+"scripts": {
   "start": "node server.js",
-  "build": "vite build"
+  "dev": "vite",
+  "server": "node server.js",
+  "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
+  "build": "vite build",
+  "preview": "vite preview"
 },
   "dependencies": {
     "antd": "^5.15.2",
