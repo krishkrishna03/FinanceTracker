@@ -10,6 +10,10 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "scripts": {
+  "start": "node server.js",
+  "build": "vite build"
+},
   "dependencies": {
     "antd": "^5.15.2",
     "axios": "^1.6.7",
