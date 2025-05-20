@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -13,13 +14,15 @@ const analysisRoutes = require('./routes/analysis');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI;
 
-// Middleware
+// Allowed CORS origins
 const allowedOrigins = [
   'http://localhost:5173',
   'https://financetrackerk.netlify.app'
 ];
 
+// Middleware
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -35,28 +38,32 @@ app.use(express.json());
 app.use(cookieParser());
 
 // MongoDB connection
-const MONGO_URI = process.env.MONGO_URI;
-
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('✅ MongoDB connected successfully'))
+.then(() => console.log('✅ MongoDB connected'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// Routes
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/income', incomeRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/analysis', analysisRoutes);
 
-// Root route
-app.get('/', (req, res) => {
+// Root API
+app.get('/api', (req, res) => {
   res.send('🚀 FinTrack API is running');
 });
 
-// Start the server
+// === Serve frontend build from dist (optional) ===
+app.use(express.static(path.join(__dirname, 'dist')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+// Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
